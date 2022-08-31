@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 public class DocumentoBuscado {
 
     @NotBlank (message = "debe ingresar un numero de documento")
-    @Pattern(regexp = "1[0-9]{7,9}", message = "el numero de documento debe tener de 8 a 10 digitos" +
+    @Pattern(regexp = "[1-9][0-9]{7,9}", message = "el numero de documento debe tener de 8 a 10 digitos" +
             " y no debe tener letras, signos de puntuacion, etc.")
     private String numeroDeDocumento;
 

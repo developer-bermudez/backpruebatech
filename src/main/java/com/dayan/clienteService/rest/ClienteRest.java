@@ -15,9 +15,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping ("/cliente")
+@CrossOrigin ("http://localhost:4200")
 public class ClienteRest {
 
     private final static Logger logger = LoggerFactory.getLogger(ClienteRest.class);
@@ -35,19 +37,23 @@ public class ClienteRest {
                         bindingResult.getAllErrors()), HttpStatus.BAD_REQUEST);
             }
 
-            Cliente cliente = clienteService.getClientByDocumento(documentoBuscado.getNumeroDeDocumento(),
+            Optional<Cliente> cliente = clienteService.findClientByDocumento(documentoBuscado.getNumeroDeDocumento(),
                     documentoBuscado.getTipoDeDocumento());
 
-            if (cliente != null) {
-                return new ResponseEntity(cliente, HttpStatus.OK);
+            if (!cliente.isEmpty()) {
+                if(!clienteService.esUnClienteValido(documentoBuscado.getNumeroDeDocumento())){
+                    return new ResponseEntity(new MensajeDeRespuesta("el cliente a buscar no es un cliente valido",
+                            null,2),HttpStatus.OK);
+                }
+                return new ResponseEntity(new MensajeDeRespuesta("Peticion exitosa", cliente.get(), 1), HttpStatus.OK);
             }
         } catch (Exception exception) {
             logger.error(exception.getMessage());
-            return new ResponseEntity(new MensajeDeRespuesta(exception.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new MensajeDeRespuesta(exception.getMessage(), null,0),HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         logger.info("los datos ingresados no corresponden a ningun cliente");
         return new ResponseEntity(new MensajeDeRespuesta("Los datos ingresados no corresponden a " +
-                "ningun usuario"), HttpStatus.OK);
+                "ningun usuario",null,0), HttpStatus.OK);
     }
 }

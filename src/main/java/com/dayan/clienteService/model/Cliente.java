@@ -12,6 +12,7 @@ public class Cliente {
     private TipoDeDocumento tipoDeDocumento;
 
     public Cliente() {
+        numeroDeDocumento = "";
     }
 
     public Cliente(String primerNombre, String segundoNombre, String primerApellido, String segundoApellido,
